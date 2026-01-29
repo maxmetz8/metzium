@@ -56,11 +56,11 @@ export async function submitContactForm(formData: FormData) {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
       message: formData.get("message") as string,
-      website: formData.get("website") as string, // Honeypot field
+      company: formData.get("company") as string, // Honeypot field
     };
 
     // Honeypot check - if filled, it's likely a bot
-    if (rawData.website) {
+    if (rawData.company) {
       return {
         success: false,
         error: "Invalid submission",

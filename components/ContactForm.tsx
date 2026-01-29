@@ -12,7 +12,8 @@ export default function ContactForm() {
     setIsSubmitting(true);
     setMessage(null);
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
 
     try {
       const result = await submitContactForm(formData);
@@ -20,7 +21,7 @@ export default function ContactForm() {
       if (result.success) {
         setMessage({ type: "success", text: result.message || "Message sent successfully!" });
         // Reset form
-        event.currentTarget.reset();
+        form.reset();
       } else {
         setMessage({ type: "error", text: result.error || "Failed to send message" });
       }
@@ -37,10 +38,10 @@ export default function ContactForm() {
       {/* Honeypot field - hidden from users */}
       <input
         type="text"
-        name="website"
+        name="company"
         tabIndex={-1}
-        autoComplete="off"
-        className="absolute -left-[9999px]"
+        autoComplete="new-password"
+        className="absolute -left-[9999px] top-auto w-0 h-0 overflow-hidden"
         aria-hidden="true"
       />
 

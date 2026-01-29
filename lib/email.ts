@@ -1,5 +1,17 @@
 import nodemailer from "nodemailer";
 
+// HTML escape utility to prevent XSS
+function escapeHtml(text: string): string {
+  const map: { [key: string]: string } = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, (m) => map[m]);
+}
+
 export async function sendContactEmail(data: {
   name: string;
   email: string;
@@ -21,7 +33,7 @@ export async function sendContactEmail(data: {
     },
   });
 
-  // Prepare email content
+  // Prepare email content with HTML escaping
   const mailOptions = {
     from: process.env.SMTP_FROM || process.env.SMTP_USER,
     to: process.env.SMTP_TO || "contact@metzium.com",
@@ -35,10 +47,10 @@ ${data.message}
     `.trim(),
     html: `
 <h2>New Contact Form Submission</h2>
-<p><strong>Name:</strong> ${data.name}</p>
-<p><strong>Email:</strong> ${data.email}</p>
+<p><strong>Name:</strong> ${escapeHtml(data.name)}</p>
+<p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
 <h3>Message:</h3>
-<p>${data.message.replace(/\n/g, "<br>")}</p>
+<p>${escapeHtml(data.message).replace(/\n/g, "<br>")}</p>
     `.trim(),
     replyTo: data.email,
   };

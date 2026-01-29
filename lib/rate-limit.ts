@@ -1,5 +1,8 @@
 // Simple in-memory rate limiter
 // Stores IP addresses and their request timestamps
+// NOTE: This implementation is suitable for single-server deployments.
+// For serverless environments (e.g., Vercel), consider using Redis or a 
+// database-backed solution for persistent rate limiting across instances.
 type RateLimitStore = Map<string, number[]>;
 
 const store: RateLimitStore = new Map();
@@ -11,7 +14,7 @@ export function checkRateLimit(ip: string): { allowed: boolean; remaining: numbe
   const now = Date.now();
   const timestamps = store.get(ip) || [];
   
-  // Remove timestamps outside the current window
+  // Remove timestamps outside the current window (on-demand cleanup)
   const validTimestamps = timestamps.filter(timestamp => now - timestamp < RATE_LIMIT_WINDOW);
   
   // Check if limit is exceeded
@@ -36,15 +39,18 @@ export function checkRateLimit(ip: string): { allowed: boolean; remaining: numbe
   };
 }
 
-// Clean up old entries periodically
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, timestamps] of store.entries()) {
-    const validTimestamps = timestamps.filter(timestamp => now - timestamp < RATE_LIMIT_WINDOW);
-    if (validTimestamps.length === 0) {
-      store.delete(ip);
-    } else {
-      store.set(ip, validTimestamps);
+// Periodic cleanup - runs only in non-serverless environments
+// In serverless, cleanup happens on-demand in checkRateLimit
+if (typeof setInterval !== 'undefined') {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [ip, timestamps] of store.entries()) {
+      const validTimestamps = timestamps.filter(timestamp => now - timestamp < RATE_LIMIT_WINDOW);
+      if (validTimestamps.length === 0) {
+        store.delete(ip);
+      } else {
+        store.set(ip, validTimestamps);
+      }
     }
-  }
-}, RATE_LIMIT_WINDOW);
+  }, RATE_LIMIT_WINDOW);
+}

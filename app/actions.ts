@@ -18,7 +18,15 @@ export async function submitContactForm(formData: FormData) {
     const origin = headersList.get("origin");
     const host = headersList.get("host");
     
-    if (origin && host) {
+    // In production, origin should always be present for POST requests
+    // Allow missing origin only in development
+    if (origin) {
+      if (!host) {
+        return {
+          success: false,
+          error: "Invalid request",
+        };
+      }
       const originUrl = new URL(origin);
       if (originUrl.host !== host) {
         return {
@@ -26,6 +34,12 @@ export async function submitContactForm(formData: FormData) {
           error: "Invalid origin",
         };
       }
+    } else if (process.env.NODE_ENV === "production") {
+      // In production, require origin header
+      return {
+        success: false,
+        error: "Invalid request - missing origin",
+      };
     }
 
     // Check rate limit
@@ -53,22 +67,25 @@ export async function submitContactForm(formData: FormData) {
       };
     }
 
-    // Basic spam checks
+    // Basic spam checks - count total links in message
     const message = rawData.message || "";
     const spamPatterns = [
-      /http:\/\//gi,
-      /https:\/\//gi,
+      /https?:\/\//gi,  // Match both http and https
       /\[url=/gi,
       /\[link=/gi,
       /<a href=/gi,
     ];
 
-    const hasSpamLinks = spamPatterns.some(pattern => {
+    // Count total links across all patterns
+    let totalLinks = 0;
+    spamPatterns.forEach(pattern => {
       const matches = message.match(pattern);
-      return matches && matches.length > 2; // Allow up to 2 links
+      if (matches) {
+        totalLinks += matches.length;
+      }
     });
 
-    if (hasSpamLinks) {
+    if (totalLinks > 2) {
       return {
         success: false,
         error: "Your message contains too many links. Please remove some and try again.",

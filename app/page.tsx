@@ -1,4 +1,7 @@
+import Image from "next/image";
 import ContactForm from "@/components/ContactForm";
+import HeroImage from "@/images/Hero afbeelding tech laptop.jpg";
+import MetziumLogo from "@/images/Metzium Logo png.png";
 
 export default function Home() {
   return (
@@ -6,8 +9,10 @@ export default function Home() {
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm z-50 border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="text-2xl font-bold text-blue-600">Metzium</div>
+          <div className="flex justify-between items-center h-20">
+            <div className="relative h-8 w-32 -ml-24">
+              <Image src={MetziumLogo} alt="Metzium" fill className="object-contain object-left" />
+            </div>
             <div className="hidden md:flex space-x-8">
               <a href="#hero" className="hover:text-blue-600 transition-colors">Home</a>
               <a href="#services" className="hover:text-blue-600 transition-colors">Services</a>
@@ -20,17 +25,33 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section id="hero" className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-            Welcome to Metzium
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+      <section id="hero" className="relative pt-80 pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="absolute inset-x-0 top-16 bottom-0">
+          <Image
+            src={HeroImage}
+            alt="Technology workspace with laptop"
+            fill
+            priority
+            className="object-cover scale-110 scale-y-125"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/60 via-indigo-900/50 to-gray-900/60" />
+        </div>
+        <div className="relative max-w-7xl mx-auto text-center">
+          <div className="flex items-center justify-center gap-1 mb-6">
+            <h1 className="text-3xl md:text-5xl font-normal text-white tracking-tight drop-shadow-[0_6px_18px_rgba(0,0,0,0.45)]">
+              Welcome to
+            </h1>
+            <div className="relative h-16 w-64">
+              <Image src={MetziumLogo} alt="Metzium" fill className="object-contain drop-shadow-[0_6px_18px_rgba(0,0,0,0.45)]" />
+            </div>
+          </div>
+          <p className="text-sm md:text-base text-white/90 mb-8 mx-auto drop-shadow-[0_4px_12px_rgba(0,0,0,0.35)] font-thin tracking-wider whitespace-nowrap">
             Professional web development services and innovative solutions for your business
           </p>
           <a
             href="#contact"
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
+            className="inline-block bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white font-semibold py-3 px-8 rounded-lg border-2 border-white/60 transition-all duration-200"
           >
             Get in Touch
           </a>
@@ -118,7 +139,12 @@ export default function Home() {
       {/* About Section */}
       <section id="about" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">About Metzium</h2>
+          <div className="flex items-center justify-center gap-3 mb-12">
+            <h2 className="text-4xl font-bold text-center">About</h2>
+            <div className="relative h-40 w-[40rem]">
+              <Image src={MetziumLogo} alt="Metzium" fill className="object-contain" />
+            </div>
+          </div>
           <div className="prose prose-lg dark:prose-invert mx-auto">
             <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-6">
               Metzium is dedicated to delivering exceptional web development services and innovative digital solutions. 

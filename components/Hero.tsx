@@ -6,7 +6,7 @@ import MetziumLogoWhite from "@/images/Metzium Logo png.png";
 
 export default function Hero() {
   return (
-    <section id="home" className="relative h-dvh px-4 sm:px-6 lg:px-8 overflow-hidden flex flex-col items-center justify-center bg-black">
+    <section id="home" className="relative h-dvh px-4 sm:px-6 lg:px-8 overflow-hidden flex flex-col items-center justify-center">
       <div className="absolute inset-x-4 top-6 bottom-6 rounded-[20px] overflow-hidden">
         <Image
           src={HeroImage}

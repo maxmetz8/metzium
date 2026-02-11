@@ -2,7 +2,7 @@ import ContactForm from "@/components/ContactForm";
 
 export default function Contact() {
   return (
-    <section id="contact" className="relative h-dvh px-4 sm:px-6 lg:px-8 overflow-hidden flex flex-col items-center justify-center bg-black">
+    <section id="contact" className="relative h-dvh px-4 sm:px-6 lg:px-8 overflow-hidden flex flex-col items-center justify-center">
       <div className="absolute inset-x-4 top-6 bottom-6 rounded-[20px] overflow-hidden bg-gray-50 dark:bg-gray-900">
         <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-slate-900/80 to-black/80" />
       </div>

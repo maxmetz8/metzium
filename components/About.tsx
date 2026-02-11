@@ -1,41 +1,74 @@
-import Image from "next/image";
-import BlueWave from "@/images/blue wave.jpg";
-import MetziumLogo from "@/images/metzium logo png colour 2.png";
+"use client";
+
+import CardSwap, { Card } from "./CardSwap";
 
 export default function About() {
+  const cards = [
+    {
+      title: "High-Impact Web Design",
+      text: "We craft design systems and interfaces that feel premium, communicate clearly, and convert consistently across devices.",
+    },
+    {
+      title: "Custom Apps That Scale",
+      text: "From MVP to production, we build resilient apps with clean architecture and performance-first engineering.",
+    },
+    {
+      title: "Reliable Hosting",
+      text: "Secure deployments, monitoring, and uptime strategies that keep your product fast and dependable.",
+    },
+    {
+      title: "Maintenance & Support",
+      text: "Continuous improvements, updates, and support so your platform stays stable and future-ready.",
+    },
+  ];
+
   return (
-    <section id="about" className="relative h-dvh px-4 sm:px-6 lg:px-8 overflow-hidden flex flex-col items-center justify-center bg-black">
-      <div className="absolute inset-x-4 top-6 bottom-6 rounded-[20px] overflow-hidden">
-        <Image
-          src={BlueWave}
-          alt="About background"
-          fill
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/50" />
-      </div>
-      <div className="relative max-w-7xl mx-auto z-10">
-        <div className="flex items-center justify-center gap-3 mb-12 flex-nowrap">
-          <h2 className="text-4xl font-bold text-center leading-none translate-y-[2px]">About</h2>
-          <div className="relative h-16 w-56 -translate-y-[1px]">
-            <Image src={MetziumLogo} alt="Metzium" fill className="object-contain" />
+    <section id="about" className="relative min-h-screen px-4 sm:px-6 lg:px-8 overflow-hidden py-24">
+
+      <div className="relative max-w-7xl mx-auto z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        {/* Left content */}
+        <div>
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full animate-pulse delay-75"></div>
+              <div className="w-2 h-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-pulse delay-150"></div>
+            </div>
+            <div className="h-px flex-1 bg-gradient-to-r from-white/40 via-white/20 to-transparent"></div>
           </div>
+          <h2 className="text-4xl md:text-5xl font-semibold text-white mb-6">Why Metzium?</h2>
+          <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-xl">
+            Our electro-thermal energy storage approach enables efficient use of renewables at local and national levels, 
+            delivering economically viable decarbonization for industry. Scalable and agile, we integrate with existing 
+            infrastructure and can be deployed wherever you need reliable, high-performance digital solutions.
+          </p>
+          <button className="mt-8 inline-flex items-center gap-3 rounded-full bg-emerald-300/90 px-5 py-2 text-sm font-semibold text-emerald-950 hover:bg-emerald-300 transition">
+            See solutions
+            <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-950 text-emerald-200">•</span>
+          </button>
         </div>
-        <div className="prose prose-lg dark:prose-invert mx-auto">
-          <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-6">
-            Metzium is dedicated to delivering exceptional web development services and innovative digital solutions. 
-            With years of experience in the industry, we specialize in creating modern, responsive, and user-friendly 
-            applications that help businesses achieve their goals.
-          </p>
-          <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed mb-6">
-            Our team is passionate about staying at the forefront of web technologies, ensuring that every project 
-            we undertake leverages the latest tools and best practices. We believe in building long-term partnerships 
-            with our clients, providing ongoing support and guidance as their needs evolve.
-          </p>
-          <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
-            Whether you're a startup looking to establish your online presence or an established business seeking 
-            to modernize your digital infrastructure, Metzium has the expertise and dedication to bring your vision to life.
-          </p>
+
+        {/* Right card swap */}
+        <div className="relative flex justify-center lg:justify-end">
+          <CardSwap
+            width={520}
+            height={560}
+            cardDistance={54}
+            verticalDistance={38}
+            delay={4500}
+            pauseOnHover
+          >
+            {cards.map((card) => (
+              <Card key={card.title} className="p-10 text-white">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.35em] text-white/80">Why Metzium?</div>
+                <div className="mt-3 h-px w-full bg-white/20" />
+                <h3 className="mt-8 text-2xl font-semibold">{card.title}</h3>
+                <p className="mt-5 text-sm leading-relaxed text-white/80">
+                  {card.text}
+                </p>
+              </Card>
+            ))}
+          </CardSwap>
         </div>
       </div>
     </section>

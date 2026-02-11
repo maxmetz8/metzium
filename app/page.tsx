@@ -2,6 +2,7 @@ import Hero from "@/components/Hero";
 import Services from "@/components/Services";
 import Projects from "@/components/Projects";
 import About from "@/components/About";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -10,15 +11,7 @@ export default function Home() {
       <Services />
       <Projects />
       <About />
-
-      {/* Footer */}
-      <footer className="text-white py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-gray-400">
-            &copy; {new Date().getFullYear()} Metzium. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

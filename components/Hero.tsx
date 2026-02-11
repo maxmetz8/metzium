@@ -29,7 +29,7 @@ export default function Hero() {
           Professional web development services and innovative solutions for your business
         </p>
         <a
-          href="#contact"
+          href="/contact"
           className="inline-block bg-white/20 backdrop-blur-sm hover:bg-white/30 hover:scale-105 text-white font-semibold py-2 px-6 sm:py-3 sm:px-8 rounded-lg border-2 border-white/60 transition-all duration-200 text-sm sm:text-base"
         >
           Start Now

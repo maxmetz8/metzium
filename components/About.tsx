@@ -65,7 +65,7 @@ export default function About() {
   ];
 
   return (
-    <section id="about" className="relative min-h-screen px-4 sm:px-6 lg:px-8 overflow-hidden py-24">
+    <section id="about" className="relative min-h-screen px-4 sm:px-6 lg:px-8 overflow-hidden pt-48 pb-44">
 
       <div className="relative max-w-7xl mx-auto z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Left content */}
@@ -78,11 +78,11 @@ export default function About() {
             </div>
             <div className="h-px flex-1 bg-gradient-to-r from-white/40 via-white/20 to-transparent"></div>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-white mb-6">Why Metzium?</h2>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-white mb-6">About Metzium</h2>
           <p className="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed max-w-xl">
-            Our electro-thermal energy storage approach enables efficient use of renewables at local and national levels, 
-            delivering economically viable decarbonization for industry. Scalable and agile, we integrate with existing 
-            infrastructure and can be deployed wherever you need reliable, high-performance digital solutions.
+            At Metzium, we transform ambitious ideas into exceptional digital experiences. With expertise in modern web technologies 
+            and a commitment to quality, we deliver scalable solutions that drive real business results. From initial concept to 
+            ongoing support, we partner with you at every stage to build products that users love and businesses rely on.
           </p>
           <button className="mt-8 inline-flex items-center gap-3 rounded-full bg-emerald-300/90 px-5 py-2 text-sm font-semibold text-emerald-950 hover:bg-emerald-300 transition">
             See solutions

@@ -4,9 +4,17 @@ import MagicBento from "./MagicBento";
 
 export default function Projects() {
   return (
-    <section id="featured-projects" className="relative py-44 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section id="featured-projects" className="relative py-44 pt-56 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <div className="max-w-7xl mx-auto relative">
-        <div className="border-t border-white/20 mb-8"></div>
+        <div className="flex items-center justify-center gap-4 mb-8">
+          <div className="h-px flex-1 bg-gradient-to-r from-white/20 via-white/5 to-transparent"></div>
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full animate-pulse delay-75"></div>
+            <div className="w-2 h-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-pulse delay-150"></div>
+          </div>
+          <div className="h-px flex-1 bg-gradient-to-l from-white/20 via-white/5 to-transparent"></div>
+        </div>
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between mb-10">
           <div>
             <h2 className="text-4xl font-semibold text-white">Featured Projects</h2>

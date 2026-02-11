@@ -3,7 +3,7 @@
 export default function Services() {
   const services = [
     {
-      number: "01",
+      emoji: "🎨",
       title: "Web Design",
       category: "Design",
       description: "Beautiful, responsive designs that engage your audience and deliver exceptional user experiences.",
@@ -13,7 +13,7 @@ export default function Services() {
       hoverShadow: "hover:shadow-cyan-400/60",
     },
     {
-      number: "02",
+      emoji: "💻",
       title: "Custom Apps",
       category: "Development",
       description: "Custom web applications built with modern technologies and best practices.",
@@ -23,7 +23,7 @@ export default function Services() {
       hoverShadow: "hover:shadow-pink-400/60",
     },
     {
-      number: "03",
+      emoji: "🚀",
       title: "Hosting Service",
       category: "Infrastructure",
       description: "Professional hosting and deployment services for your applications.",
@@ -33,7 +33,7 @@ export default function Services() {
       hoverShadow: "hover:shadow-yellow-400/60",
     },
     {
-      number: "04",
+      emoji: "🔧",
       title: "Maintenance",
       category: "Support",
       description: "Ongoing maintenance and technical support to keep your applications running smoothly.",
@@ -57,10 +57,10 @@ export default function Services() {
             </div>
             <div className="h-px flex-1 bg-gradient-to-r from-white/40 via-white/20 to-transparent"></div>
           </div>
-          <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
             Services
           </h2>
-          <p className="text-gray-400 mt-4 text-lg">From concept to deployment - your complete digital journey</p>
+          <p className="text-gray-400 mt-4 text-sm sm:text-base md:text-lg">From concept to deployment - your complete digital journey</p>
         </div>
 
         {/* Supply Chain Grid */}
@@ -88,14 +88,14 @@ export default function Services() {
                   {/* Header */}
                   <div>
                     <div className="flex items-start justify-between mb-4">
-                      <span className={`text-6xl font-bold bg-gradient-to-br ${service.color} bg-clip-text text-transparent opacity-30 group-hover:opacity-50 transition-opacity`}>
-                        {service.number}
+                      <span className="text-6xl opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 transform duration-300">
+                        {service.emoji}
                       </span>
                       <span className="text-xs font-semibold uppercase tracking-widest text-gray-500 group-hover:text-gray-400 transition-colors">
                         {service.category}
                       </span>
                     </div>
-                    <h3 className="text-2xl font-bold text-white mb-3 group-hover:translate-x-1 transition-transform">
+                    <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 group-hover:translate-x-1 transition-transform">
                       {service.title}
                     </h3>
                   </div>

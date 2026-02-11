@@ -1,8 +1,50 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import CardSwap, { Card } from "./CardSwap";
 
 export default function About() {
+  const [cardDimensions, setCardDimensions] = useState({
+    width: 420,
+    height: 480,
+    cardDistance: 44,
+    verticalDistance: 32,
+  });
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (window.innerWidth < 640) {
+        // Mobile
+        setCardDimensions({
+          width: 260,
+          height: 360,
+          cardDistance: 26,
+          verticalDistance: 18,
+        });
+      } else if (window.innerWidth < 1024) {
+        // Tablet
+        setCardDimensions({
+          width: 340,
+          height: 420,
+          cardDistance: 34,
+          verticalDistance: 24,
+        });
+      } else {
+        // Desktop
+        setCardDimensions({
+          width: 420,
+          height: 480,
+          cardDistance: 44,
+          verticalDistance: 32,
+        });
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, []);
+
   const cards = [
     {
       title: "High-Impact Web Design",
@@ -36,8 +78,8 @@ export default function About() {
             </div>
             <div className="h-px flex-1 bg-gradient-to-r from-white/40 via-white/20 to-transparent"></div>
           </div>
-          <h2 className="text-4xl md:text-5xl font-semibold text-white mb-6">Why Metzium?</h2>
-          <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-xl">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-white mb-6">Why Metzium?</h2>
+          <p className="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed max-w-xl">
             Our electro-thermal energy storage approach enables efficient use of renewables at local and national levels, 
             delivering economically viable decarbonization for industry. Scalable and agile, we integrate with existing 
             infrastructure and can be deployed wherever you need reliable, high-performance digital solutions.
@@ -51,19 +93,19 @@ export default function About() {
         {/* Right card swap */}
         <div className="relative flex justify-center lg:justify-end">
           <CardSwap
-            width={520}
-            height={560}
-            cardDistance={54}
-            verticalDistance={38}
+            width={cardDimensions.width}
+            height={cardDimensions.height}
+            cardDistance={cardDimensions.cardDistance}
+            verticalDistance={cardDimensions.verticalDistance}
             delay={4500}
             pauseOnHover
           >
             {cards.map((card) => (
-              <Card key={card.title} className="p-10 text-white">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.35em] text-white/80">Why Metzium?</div>
+              <Card key={card.title} className="p-6 sm:p-10 text-white">
+                <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.35em] text-white/80">Why Metzium?</div>
                 <div className="mt-3 h-px w-full bg-white/20" />
-                <h3 className="mt-8 text-2xl font-semibold">{card.title}</h3>
-                <p className="mt-5 text-sm leading-relaxed text-white/80">
+                <h3 className="mt-6 sm:mt-8 text-xl sm:text-2xl font-semibold">{card.title}</h3>
+                <p className="mt-4 sm:mt-5 text-xs sm:text-sm leading-relaxed text-white/80">
                   {card.text}
                 </p>
               </Card>

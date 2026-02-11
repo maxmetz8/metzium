@@ -45,44 +45,97 @@ export default function ContactForm() {
         aria-hidden="true"
       />
 
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium mb-2">
-          Name *
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800"
-          disabled={isSubmitting}
-        />
+      {/* First Name and Last Name */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="firstName" className="block text-sm font-medium mb-2">
+            First Name *
+          </label>
+          <input
+            type="text"
+            id="firstName"
+            name="firstName"
+            required
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-white"
+            disabled={isSubmitting}
+          />
+        </div>
+        <div>
+          <label htmlFor="lastName" className="block text-sm font-medium mb-2">
+            Last Name *
+          </label>
+          <input
+            type="text"
+            id="lastName"
+            name="lastName"
+            required
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-white"
+            disabled={isSubmitting}
+          />
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium mb-2">
-          Email *
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800"
-          disabled={isSubmitting}
-        />
+      {/* Email and Type of Enquiry */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium mb-2">
+            Email Address *
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-white"
+            disabled={isSubmitting}
+          />
+        </div>
+        <div>
+          <label htmlFor="enquiryType" className="block text-sm font-medium mb-2">
+            Type of Enquiry *
+          </label>
+          <div className="relative">
+            <select
+              id="enquiryType"
+              name="enquiryType"
+              required
+              className="w-full h-[42px] appearance-none px-4 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-white text-base leading-normal"
+              disabled={isSubmitting}
+            >
+              <option value="">Select an option</option>
+              <option value="General">General</option>
+              <option value="Support">Support</option>
+              <option value="Sales">Sales</option>
+              <option value="Partnership">Partnership</option>
+              <option value="Other">Other</option>
+            </select>
+            <svg
+              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
+        </div>
       </div>
 
+      {/* Message */}
       <div>
         <label htmlFor="message" className="block text-sm font-medium mb-2">
-          Message *
+          How can we help? *
         </label>
         <textarea
           id="message"
           name="message"
           required
           rows={6}
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 resize-none"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-white resize-none"
           disabled={isSubmitting}
         />
       </div>

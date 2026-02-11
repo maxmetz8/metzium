@@ -13,8 +13,10 @@ function escapeHtml(text: string): string {
 }
 
 export async function sendContactEmail(data: {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
+  enquiryType: string;
   message: string;
 }) {
   // Verify environment variables are set
@@ -37,18 +39,20 @@ export async function sendContactEmail(data: {
   const mailOptions = {
     from: process.env.SMTP_FROM || process.env.SMTP_USER,
     to: process.env.SMTP_TO || "contact@metzium.com",
-    subject: `New Contact Form Submission from ${data.name}`,
+    subject: `New Contact Form Submission from ${data.firstName} ${data.lastName}`,
     text: `
-Name: ${data.name}
+  Name: ${data.firstName} ${data.lastName}
 Email: ${data.email}
+  Enquiry Type: ${data.enquiryType}
 
 Message:
 ${data.message}
     `.trim(),
     html: `
 <h2>New Contact Form Submission</h2>
-<p><strong>Name:</strong> ${escapeHtml(data.name)}</p>
+  <p><strong>Name:</strong> ${escapeHtml(data.firstName)} ${escapeHtml(data.lastName)}</p>
 <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
+  <p><strong>Enquiry Type:</strong> ${escapeHtml(data.enquiryType)}</p>
 <h3>Message:</h3>
 <p>${escapeHtml(data.message).replace(/\n/g, "<br>")}</p>
     `.trim(),

@@ -53,8 +53,10 @@ export async function submitContactForm(formData: FormData) {
 
     // Extract and validate form data
     const rawData = {
-      name: formData.get("name") as string,
+      firstName: formData.get("firstName") as string,
+      lastName: formData.get("lastName") as string,
       email: formData.get("email") as string,
+      enquiryType: formData.get("enquiryType") as string,
       message: formData.get("message") as string,
       company: formData.get("company") as string, // Honeypot field
     };

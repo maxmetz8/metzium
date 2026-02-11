@@ -1,138 +1,128 @@
 "use client";
 
-import Image from "next/image";
-import BlueWave2 from "@/images/blue wave 2.jpg";
-import LogoGlow from "@/images/Metzium logo glow.png";
-import { useState } from "react";
-
 export default function Services() {
-  const [isFlippedCenter, setIsFlippedCenter] = useState(false);
+  const services = [
+    {
+      emoji: "🎨",
+      title: "Web Design",
+      category: "Design",
+      description: "Beautiful, responsive designs that engage your audience and deliver exceptional user experiences.",
+      color: "from-blue-500 to-cyan-500",
+      borderColor: "border-cyan-400",
+      shadowColor: "shadow-cyan-400/30",
+      hoverShadow: "hover:shadow-cyan-400/60",
+    },
+    {
+      emoji: "💻",
+      title: "Custom Apps",
+      category: "Development",
+      description: "Custom web applications built with modern technologies and best practices.",
+      color: "from-purple-500 to-pink-500",
+      borderColor: "border-pink-400",
+      shadowColor: "shadow-pink-400/30",
+      hoverShadow: "hover:shadow-pink-400/60",
+    },
+    {
+      emoji: "🚀",
+      title: "Hosting Service",
+      category: "Infrastructure",
+      description: "Professional hosting and deployment services for your applications.",
+      color: "from-orange-500 to-yellow-500",
+      borderColor: "border-yellow-400",
+      shadowColor: "shadow-yellow-400/30",
+      hoverShadow: "hover:shadow-yellow-400/60",
+    },
+    {
+      emoji: "🔧",
+      title: "Maintenance",
+      category: "Support",
+      description: "Ongoing maintenance and technical support to keep your applications running smoothly.",
+      color: "from-green-500 to-emerald-500",
+      borderColor: "border-emerald-400",
+      shadowColor: "shadow-emerald-400/30",
+      hoverShadow: "hover:shadow-emerald-400/60",
+    },
+  ];
 
   return (
-    <section id="services" className="relative h-dvh px-4 sm:px-6 lg:px-8 overflow-hidden flex flex-col items-center justify-center bg-black">
-      <div className="absolute inset-0 overflow-hidden">
-        <Image
-          src={BlueWave2}
-          alt="Services background"
-          fill
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/40" />
-      </div>
-      <div className="relative max-w-7xl mx-auto z-10">
-        <div className="border-t-2 border-white/40 mb-8"></div>
-        <h2 className="text-4xl font-bold text-left mb-12">Services</h2>
-        <div className="space-y-8 max-w-7xl mx-auto px-4">
-          {/* First Row: Orange Card (Centered) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-            {/* Orange Card - Web Design */}
-            <div 
-              className="md:col-span-1 md:col-start-2 relative h-48 md:h-56 rounded-3xl overflow-hidden cursor-pointer group"
-              style={{ perspective: '1000px' }}
-            >
-              {/* Front */}
-              <div 
-                className="w-full h-full bg-gray-900 dark:bg-gray-900 border-2 border-orange-400 shadow-lg shadow-orange-400/50 hover:shadow-orange-400/75 p-8 rounded-3xl flex flex-col justify-between min-h-[68] transition-all duration-500"
-              >
-                <div>
-                  <p className="text-gray-300 text-xs font-semibold uppercase tracking-widest mb-3 pb-3 border-b-2 border-gray-700">Web Design</p>
-                  <h3 className="text-2xl font-bold text-white mb-4">Web Design</h3>
-                </div>
-                <p className="text-gray-400 font-light text-sm">Beautiful, responsive designs that engage your audience and deliver exceptional user experiences.</p>
-              </div>
+    <section id="services" className="relative min-h-screen px-4 sm:px-6 lg:px-8 overflow-hidden flex flex-col items-center justify-center py-20">
+      <div className="relative max-w-7xl mx-auto z-10 w-full">
+        {/* Enhanced Header */}
+        <div className="mb-16 relative">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full animate-pulse delay-75"></div>
+              <div className="w-2 h-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-pulse delay-150"></div>
             </div>
+            <div className="h-px flex-1 bg-gradient-to-r from-white/40 via-white/20 to-transparent"></div>
           </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
+            Services
+          </h2>
+          <p className="text-gray-400 mt-4 text-sm sm:text-base md:text-lg">From concept to deployment - your complete digital journey</p>
+        </div>
 
-          {/* Second Row: Purple Card | Image | Green Card */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-            {/* Purple Card - Hosting Service */}
-            <div 
-              className="md:col-span-1 relative h-48 md:h-56 rounded-3xl overflow-hidden cursor-pointer group"
-              style={{ perspective: '1000px' }}
-            >
-              {/* Front */}
+        {/* Supply Chain Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+          {services.map((service, index) => (
+            <div key={index} className="relative">
+              {/* Arrow connector on desktop - only between cards, not after last one */}
+              {index < services.length - 1 && (
+                <div className="hidden lg:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-20">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white/40">
+                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              )}
+              
+              {/* Service Card */}
               <div 
-                className="w-full h-full bg-gray-900 dark:bg-gray-900 border-2 border-purple-400 shadow-lg shadow-purple-400/50 hover:shadow-purple-400/75 p-8 rounded-3xl flex flex-col justify-between min-h-[68] transition-all duration-500"
+                className={`relative h-72 rounded-2xl overflow-hidden group cursor-pointer transition-all duration-500 hover:scale-105 bg-gray-900/50 backdrop-blur-sm border-2 ${service.borderColor} shadow-xl ${service.shadowColor} ${service.hoverShadow}`}
               >
-                <div>
-                  <p className="text-gray-300 text-xs font-semibold uppercase tracking-widest mb-3 pb-3 border-b-2 border-gray-700">Support</p>
-                  <h3 className="text-2xl font-bold text-white mb-4">Hosting<br />Service</h3>
+                {/* Gradient overlay */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+                
+                {/* Content */}
+                <div className="relative h-full p-6 flex flex-col justify-between">
+                  {/* Header */}
+                  <div>
+                    <div className="flex items-start justify-between mb-4">
+                      <span className="text-6xl opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-110 transform duration-300">
+                        {service.emoji}
+                      </span>
+                      <span className="text-xs font-semibold uppercase tracking-widest text-gray-500 group-hover:text-gray-400 transition-colors">
+                        {service.category}
+                      </span>
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 group-hover:translate-x-1 transition-transform">
+                      {service.title}
+                    </h3>
+                  </div>
+                  
+                  {/* Description */}
+                  <p className="text-gray-400 text-sm leading-relaxed group-hover:text-gray-300 transition-colors">
+                    {service.description}
+                  </p>
                 </div>
-                <p className="text-gray-400 font-light text-sm">Professional hosting and deployment services for your applications.</p>
+
+                {/* Bottom accent line */}
+                <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${service.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left`}></div>
               </div>
             </div>
+          ))}
+        </div>
 
-            {/* Image (Flippable) */}
-            <div
-              className="md:col-span-1 relative h-48 md:h-56 rounded-3xl overflow-hidden cursor-pointer group"
-              onMouseEnter={() => setIsFlippedCenter(true)}
-              onMouseLeave={() => setIsFlippedCenter(false)}
-              style={{ perspective: "1000px" }}
-            >
-              {/* Front */}
-              <div
-                className={`w-full h-full rounded-3xl transition-all duration-500 ${isFlippedCenter ? "opacity-0 scale-95" : "opacity-100 scale-100"}`}
-              >
-                <Image
-                  src="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  alt="Custom Apps"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-
-              {/* Back - Logo */}
-              <div
-                className={`absolute inset-0 w-full h-full bg-[#16151a] p-8 rounded-3xl flex items-center justify-center transition-all duration-500 ${isFlippedCenter ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
-              >
-                <div className="relative w-full h-full" style={{ transform: "scale(1.4)" }}>
-                  <Image
-                    src={LogoGlow}
-                    alt="Metzium Logo"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-              </div>
+        {/* Flow indicator for mobile */}
+        <div className="lg:hidden flex justify-center mt-8 gap-2">
+          {services.map((_, index) => (
+            <div key={index} className="flex items-center">
+              <div className="w-2 h-2 bg-white/40 rounded-full"></div>
+              {index < services.length - 1 && (
+                <div className="w-8 h-px bg-white/20 mx-1"></div>
+              )}
             </div>
-
-            {/* Green Card - Custom Apps */}
-            <div 
-              className="md:col-span-1 relative h-48 md:h-56 rounded-3xl overflow-hidden cursor-pointer group"
-              style={{ perspective: '1000px' }}
-            >
-              {/* Front */}
-              <div 
-                className="w-full h-full bg-gray-900 dark:bg-gray-900 border-2 border-green-400 shadow-lg shadow-green-400/50 hover:shadow-green-400/75 p-8 rounded-3xl flex flex-col justify-between min-h-[68] transition-all duration-500"
-              >
-                <div>
-                  <p className="text-gray-300 text-xs font-semibold uppercase tracking-widest mb-3 pb-3 border-b-2 border-gray-700">Web Development</p>
-                  <h3 className="text-2xl font-bold text-white mb-4">Custom Apps</h3>
-                </div>
-                <p className="text-gray-400 font-light text-sm">Custom web applications built with modern technologies.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Third Row: Blue Card (Centered) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-            {/* Blue Card - Maintenance */}
-            <div 
-              className="md:col-span-1 md:col-start-2 relative h-48 md:h-56 rounded-3xl overflow-hidden cursor-pointer group"
-              style={{ perspective: '1000px' }}
-            >
-              {/* Front */}
-              <div 
-                className="w-full h-full bg-gray-900 dark:bg-gray-900 border-2 border-blue-400 shadow-lg shadow-blue-400/50 hover:shadow-blue-400/75 p-8 rounded-3xl flex flex-col justify-between min-h-[68] transition-all duration-500"
-              >
-                <div>
-                  <p className="text-gray-300 text-xs font-semibold uppercase tracking-widest mb-3 pb-3 border-b-2 border-gray-700">Support</p>
-                  <h3 className="text-2xl font-bold text-white mb-4">Maintenance</h3>
-                </div>
-                <p className="text-gray-400 font-light text-sm">Ongoing maintenance and technical support to keep your applications running smoothly.</p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

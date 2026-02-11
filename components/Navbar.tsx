@@ -2,22 +2,28 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import MetziumLogo from "@/images/metzium logo png colour 2.png";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("home");
+  const pathname = usePathname();
 
   const navLinks = [
-    { href: "#home", label: "Home", id: "home" },
-    { href: "#services", label: "Services", id: "services" },
-    { href: "#featured-projects", label: "Projects", id: "featured-projects" },
-    { href: "#about", label: "About", id: "about" },
+    { href: "/#home", label: "Home", id: "home" },
+    { href: "/#services", label: "Services", id: "services" },
+    { href: "/#featured-projects", label: "Projects", id: "featured-projects" },
+    { href: "/#about", label: "About", id: "about" },
   ];
 
   // Intersection Observer for scroll tracking
   useEffect(() => {
+    if (pathname !== "/") {
+      setActiveLink("");
+      return;
+    }
     const observerOptions = {
       root: null,
       rootMargin: "-50% 0px -50% 0px",
@@ -49,7 +55,7 @@ export default function Navbar() {
     return () => {
       observer.disconnect();
     };
-  }, [navLinks]);
+  }, [navLinks, pathname]);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -79,7 +85,7 @@ export default function Navbar() {
       {/* Contact Button + Hamburger - Far Right */}
       <div className="fixed top-12 right-12 z-50 flex items-center gap-3">
         <Link 
-          href="#contact"
+          href="/contact"
           className="hidden md:flex items-center gap-1.5 px-5 py-2 bg-white/20 backdrop-blur-sm text-white rounded-full hover:bg-white/30 transition-all duration-300 text-sm font-medium shadow-lg border-2 border-white/60"
         >
           <span>Contact Us</span>
@@ -113,13 +119,15 @@ export default function Navbar() {
             ))}
             
             {/* Sliding Background */}
-            <div
-              className="absolute h-8 bg-white/20 rounded-full shadow-sm transition-all duration-300 ease-out -z-0"
-              style={{
-                left: `${navLinks.findIndex(l => l.id === activeLink) * (100 / navLinks.length)}%`,
-                width: `${100 / navLinks.length}%`,
-              }}
-            />
+            {activeLink && (
+              <div
+                className="absolute h-8 bg-white/20 rounded-full shadow-sm transition-all duration-300 ease-out -z-0"
+                style={{
+                  left: `${navLinks.findIndex(l => l.id === activeLink) * (100 / navLinks.length)}%`,
+                  width: `${100 / navLinks.length}%`,
+                }}
+              />
+            )}
           </div>
         </div>
 
@@ -138,7 +146,7 @@ export default function Navbar() {
                 </Link>
               ))}
               <Link
-                href="#contact"
+                href="/contact"
                 onClick={() => setIsOpen(false)}
                 className="block px-4 py-2 mt-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors duration-300 text-center text-sm font-medium"
               >

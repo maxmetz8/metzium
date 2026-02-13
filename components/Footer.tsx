@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="relative px-4 sm:px-6 lg:px-8 pt-16 pb-4 sm:pb-6 lg:pb-8">
@@ -18,29 +20,29 @@ export default function Footer() {
                 <h3 className="text-white font-semibold text-lg mb-3">Quick Links</h3>
                 <ul className="space-y-2">
                   <li>
-                    <a href="/#home" className="text-gray-400 text-sm hover:text-white transition-colors">
+                    <Link href="/#home" className="text-gray-400 text-sm hover:text-white transition-colors">
                       Home
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="/#services" className="text-gray-400 text-sm hover:text-white transition-colors">
+                    <Link href="/#services" className="text-gray-400 text-sm hover:text-white transition-colors">
                       Services
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="/#featured-projects" className="text-gray-400 text-sm hover:text-white transition-colors">
+                    <Link href="/#featured-projects" className="text-gray-400 text-sm hover:text-white transition-colors">
                       Projects
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="/#about" className="text-gray-400 text-sm hover:text-white transition-colors">
+                    <Link href="/#about" className="text-gray-400 text-sm hover:text-white transition-colors">
                       About
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="/contact" className="text-gray-400 text-sm hover:text-white transition-colors">
+                    <Link href="/contact" className="text-gray-400 text-sm hover:text-white transition-colors">
                       Contact
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>

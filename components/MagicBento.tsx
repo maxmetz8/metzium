@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useCallback, useState } from "react";
+import Image from "next/image";
 import { gsap } from "gsap";
 import "@/styles/MagicBento.css";
 
@@ -575,9 +576,12 @@ const MagicBento: React.FC<BentoProps> = ({
               >
                 {card.image && (
                   <div className="magic-bento-card__image-wrapper">
-                    <img 
-                      src={card.image} 
+                    <Image
+                      src={card.image}
                       alt={card.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      unoptimized
                       className="magic-bento-card__image"
                     />
                     <div className="magic-bento-card__image-overlay" />
@@ -709,9 +713,12 @@ const MagicBento: React.FC<BentoProps> = ({
             >
               {card.image && (
                 <div className="magic-bento-card__image-wrapper">
-                  <img 
-                    src={card.image} 
+                  <Image
+                    src={card.image}
                     alt={card.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    unoptimized
                     className="magic-bento-card__image"
                   />
                   <div className="magic-bento-card__image-overlay" />

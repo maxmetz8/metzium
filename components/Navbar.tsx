@@ -6,22 +6,22 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import MetziumLogo from "@/images/metzium logo png colour 2.png";
 
+const NAV_LINKS = [
+  { href: "/#home", label: "Home", id: "home" },
+  { href: "/#services", label: "Services", id: "services" },
+  { href: "/#featured-projects", label: "Projects", id: "featured-projects" },
+  { href: "/#about", label: "About", id: "about" },
+];
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("home");
   const pathname = usePathname();
-
-  const navLinks = [
-    { href: "/#home", label: "Home", id: "home" },
-    { href: "/#services", label: "Services", id: "services" },
-    { href: "/#featured-projects", label: "Projects", id: "featured-projects" },
-    { href: "/#about", label: "About", id: "about" },
-  ];
+  const displayActiveLink = pathname === "/" ? activeLink : "";
 
   // Intersection Observer for scroll tracking
   useEffect(() => {
     if (pathname !== "/") {
-      setActiveLink("");
       return;
     }
     const observerOptions = {
@@ -34,7 +34,7 @@ export default function Navbar() {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const sectionId = entry.target.id;
-          const matchingLink = navLinks.find((link) => link.id === sectionId);
+          const matchingLink = NAV_LINKS.find((link) => link.id === sectionId);
           if (matchingLink) {
             setActiveLink(matchingLink.id);
           }
@@ -45,7 +45,7 @@ export default function Navbar() {
     const observer = new IntersectionObserver(observerCallback, observerOptions);
 
     // Observe all sections
-    navLinks.forEach((link) => {
+    NAV_LINKS.forEach((link) => {
       const element = document.getElementById(link.id);
       if (element) {
         observer.observe(element);
@@ -55,7 +55,7 @@ export default function Navbar() {
     return () => {
       observer.disconnect();
     };
-  }, [navLinks, pathname]);
+  }, [pathname]);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -105,7 +105,7 @@ export default function Navbar() {
       {/* Mobile Menu Dropdown */}
       {isOpen && (
         <div className="md:hidden fixed top-20 right-6 z-50 bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg p-3 min-w-[200px] border-2 border-white/60">
-          {navLinks.map((link) => (
+          {NAV_LINKS.map((link) => (
             <Link
               key={link.id}
               href={link.href}
@@ -130,7 +130,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center bg-white/20 backdrop-blur-sm rounded-full shadow-lg px-2 py-1 gap-0 border-2 border-white/60">
           {/* Navigation Links with Sliding Background */}
           <div className="flex items-center relative w-full">
-            {navLinks.map((link, index) => (
+            {NAV_LINKS.map((link) => (
               <Link
                 key={link.id}
                 href={link.href}
@@ -142,12 +142,12 @@ export default function Navbar() {
             ))}
             
             {/* Sliding Background */}
-            {activeLink && (
+            {displayActiveLink && (
               <div
                 className="absolute h-8 bg-white/20 rounded-full shadow-sm transition-all duration-300 ease-out -z-0"
                 style={{
-                  left: `${navLinks.findIndex(l => l.id === activeLink) * (100 / navLinks.length)}%`,
-                  width: `${100 / navLinks.length}%`,
+                  left: `${NAV_LINKS.findIndex((l) => l.id === displayActiveLink) * (100 / NAV_LINKS.length)}%`,
+                  width: `${100 / NAV_LINKS.length}%`,
                 }}
               />
             )}

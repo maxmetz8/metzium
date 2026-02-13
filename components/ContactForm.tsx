@@ -6,6 +6,8 @@ import { submitContactForm } from "@/app/actions";
 export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const fieldClassName =
+    "w-full rounded-xl border border-white/15 bg-black/30 px-4 py-3 text-white placeholder:text-gray-500 transition focus:border-cyan-300/70 focus:outline-none focus:ring-2 focus:ring-cyan-300/30 disabled:cursor-not-allowed disabled:opacity-70";
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -34,7 +36,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl mx-auto">
       {/* Honeypot field - hidden from users */}
       <input
         type="text"
@@ -48,7 +50,7 @@ export default function ContactForm() {
       {/* First Name and Last Name */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="firstName" className="block text-sm font-medium mb-2">
+          <label htmlFor="firstName" className="block text-xs sm:text-sm font-medium text-white/90 mb-2">
             First Name *
           </label>
           <input
@@ -56,12 +58,13 @@ export default function ContactForm() {
             id="firstName"
             name="firstName"
             required
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-white"
+            className={fieldClassName}
+            placeholder="John"
             disabled={isSubmitting}
           />
         </div>
         <div>
-          <label htmlFor="lastName" className="block text-sm font-medium mb-2">
+          <label htmlFor="lastName" className="block text-xs sm:text-sm font-medium text-white/90 mb-2">
             Last Name *
           </label>
           <input
@@ -69,7 +72,8 @@ export default function ContactForm() {
             id="lastName"
             name="lastName"
             required
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-white"
+            className={fieldClassName}
+            placeholder="Doe"
             disabled={isSubmitting}
           />
         </div>
@@ -78,7 +82,7 @@ export default function ContactForm() {
       {/* Email and Type of Enquiry */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-2">
+          <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-white/90 mb-2">
             Email Address *
           </label>
           <input
@@ -86,12 +90,13 @@ export default function ContactForm() {
             id="email"
             name="email"
             required
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-white"
+            className={fieldClassName}
+            placeholder="you@company.com"
             disabled={isSubmitting}
           />
         </div>
         <div>
-          <label htmlFor="enquiryType" className="block text-sm font-medium mb-2">
+          <label htmlFor="enquiryType" className="block text-xs sm:text-sm font-medium text-white/90 mb-2">
             Type of Enquiry *
           </label>
           <div className="relative">
@@ -99,7 +104,7 @@ export default function ContactForm() {
               id="enquiryType"
               name="enquiryType"
               required
-              className="w-full h-[42px] appearance-none px-4 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-white text-base leading-normal"
+              className={`${fieldClassName} h-[50px] appearance-none pr-10`}
               disabled={isSubmitting}
             >
               <option value="">Select an option</option>
@@ -110,7 +115,7 @@ export default function ContactForm() {
               <option value="Other">Other</option>
             </select>
             <svg
-              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70"
+              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/60"
               viewBox="0 0 20 20"
               fill="currentColor"
               aria-hidden="true"
@@ -127,7 +132,7 @@ export default function ContactForm() {
 
       {/* Message */}
       <div>
-        <label htmlFor="message" className="block text-sm font-medium mb-2">
+        <label htmlFor="message" className="block text-xs sm:text-sm font-medium text-white/90 mb-2">
           How can we help? *
         </label>
         <textarea
@@ -135,7 +140,8 @@ export default function ContactForm() {
           name="message"
           required
           rows={6}
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-white resize-none"
+          className={`${fieldClassName} min-h-[160px] resize-y`}
+          placeholder="Tell us about your project, timeline, and goals."
           disabled={isSubmitting}
         />
       </div>
@@ -144,8 +150,8 @@ export default function ContactForm() {
         <div
           className={`p-4 rounded-lg ${
             message.type === "success"
-              ? "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100"
-              : "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100"
+              ? "border border-emerald-300/30 bg-emerald-400/10 text-emerald-200"
+              : "border border-red-300/30 bg-red-400/10 text-red-200"
           }`}
         >
           {message.text}
@@ -155,7 +161,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
+        className="w-full rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm sm:text-base font-semibold text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting ? "Sending..." : "Send Message"}
       </button>

@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { getCurrentUser, getUserDisplayName, isAdminUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Metzium - Professional Web Development & Services",
   description: "Metzium offers professional web development services, innovative projects, and expert solutions for your business needs.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getCurrentUser();
+  const userName = user ? getUserDisplayName(user) : null;
+  const userEmail = user?.email ?? null;
+  const admin = user ? isAdminUser(user) : false;
+
   return (
     <html lang="en">
       <body className="antialiased relative">
@@ -21,7 +27,7 @@ export default function RootLayout({
           <div className="absolute bottom-[-10%] left-1/4 h-[24rem] w-[24rem] rounded-full bg-amber-400/10 blur-3xl" />
           <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.06)_1px,transparent_0)] [background-size:24px_24px]" />
         </div>
-        <Navbar />
+        <Navbar userName={userName} userEmail={userEmail} isAdmin={admin} />
         {children}
       </body>
     </html>

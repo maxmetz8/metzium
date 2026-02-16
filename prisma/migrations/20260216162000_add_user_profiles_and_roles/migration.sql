@@ -1,0 +1,13 @@
+-- CreateEnum
+CREATE TYPE "UserRole" AS ENUM ('USER', 'ADMIN');
+
+-- CreateEnum
+CREATE TYPE "AccountType" AS ENUM ('INDIVIDUAL', 'COMPANY');
+
+-- AlterTable
+ALTER TABLE "User"
+ADD COLUMN "firstName" TEXT NOT NULL DEFAULT '',
+ADD COLUMN "lastName" TEXT NOT NULL DEFAULT '',
+ADD COLUMN "role" "UserRole" NOT NULL DEFAULT 'USER',
+ADD COLUMN "accountType" "AccountType" NOT NULL DEFAULT 'INDIVIDUAL',
+ADD COLUMN "companyName" TEXT;

@@ -1,29 +1,52 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import MetziumLogo from "@/images/metzium logo png colour 2.png";
+import { logoutAction } from "@/app/logout/actions";
 
-export default function Navbar() {
+const NAV_LINKS = [
+  { href: "/#home", label: "Home", id: "home" },
+  { href: "/#services", label: "Services", id: "services" },
+  { href: "/#featured-projects", label: "Projects", id: "featured-projects" },
+  { href: "/#about", label: "About", id: "about" },
+  { href: "/contact", label: "Contact Us", id: "contact" },
+];
+
+type NavbarProps = {
+  userName: string | null;
+  userEmail: string | null;
+  isAdmin: boolean;
+};
+
+export default function Navbar({ userName, userEmail, isAdmin }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("home");
+  const userMenuRef = useRef<HTMLDivElement | null>(null);
+  const desktopLinkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const [sliderStyle, setSliderStyle] = useState({
+    left: 0,
+    width: 0,
+    visible: false,
+  });
   const pathname = usePathname();
+  const displayActiveLink =
+    pathname === "/"
+      ? activeLink
+      : pathname.startsWith("/contact")
+        ? "contact"
+        : "";
+  const isLoggedIn = Boolean(userName);
+  const userInitial = (userName?.trim().charAt(0) || userEmail?.trim().charAt(0) || "U").toUpperCase();
 
-  const navLinks = [
-    { href: "/#home", label: "Home", id: "home" },
-    { href: "/#services", label: "Services", id: "services" },
-    { href: "/#featured-projects", label: "Projects", id: "featured-projects" },
-    { href: "/#about", label: "About", id: "about" },
-  ];
-
-  // Intersection Observer for scroll tracking
   useEffect(() => {
     if (pathname !== "/") {
-      setActiveLink("");
       return;
     }
+
     const observerOptions = {
       root: null,
       rootMargin: "-50% 0px -50% 0px",
@@ -34,7 +57,7 @@ export default function Navbar() {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const sectionId = entry.target.id;
-          const matchingLink = navLinks.find((link) => link.id === sectionId);
+          const matchingLink = NAV_LINKS.find((link) => link.id === sectionId);
           if (matchingLink) {
             setActiveLink(matchingLink.id);
           }
@@ -44,8 +67,7 @@ export default function Navbar() {
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
 
-    // Observe all sections
-    navLinks.forEach((link) => {
+    NAV_LINKS.forEach((link) => {
       const element = document.getElementById(link.id);
       if (element) {
         observer.observe(element);
@@ -55,11 +77,51 @@ export default function Navbar() {
     return () => {
       observer.disconnect();
     };
-  }, [navLinks, pathname]);
+  }, [pathname]);
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  useEffect(() => {
+    if (!isUserMenuOpen) {
+      return;
+    }
+
+    const onPointerDown = (event: MouseEvent) => {
+      if (!userMenuRef.current?.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", onPointerDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+    };
+  }, [isUserMenuOpen]);
+
+  useEffect(() => {
+    const updateSliderPosition = () => {
+      if (!displayActiveLink) {
+        setSliderStyle((previous) => ({ ...previous, visible: false }));
+        return;
+      }
+
+      const activeElement = desktopLinkRefs.current[displayActiveLink];
+      if (!activeElement) {
+        setSliderStyle((previous) => ({ ...previous, visible: false }));
+        return;
+      }
+
+      setSliderStyle({
+        left: activeElement.offsetLeft,
+        width: activeElement.offsetWidth,
+        visible: true,
+      });
+    };
+
+    updateSliderPosition();
+    window.addEventListener("resize", updateSliderPosition);
+    return () => {
+      window.removeEventListener("resize", updateSliderPosition);
+    };
+  }, [displayActiveLink]);
 
   const handleLinkClick = (link: string) => {
     setActiveLink(link);
@@ -68,86 +130,166 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Logo - Far Left */}
-      <div className="fixed top-6 left-6 md:top-12 md:left-12 z-50 flex items-center">
+      <div className="fixed top-6 left-6 z-50 flex items-center md:top-12 md:left-12">
         <Link href="/" className="flex items-center">
           <div className="relative h-6 w-24 md:h-8 md:w-32">
-            <Image 
-              src={MetziumLogo} 
-              alt="Metzium" 
-              fill 
-              className="object-contain"
-            />
+            <Image src={MetziumLogo} alt="Metzium" fill className="object-contain" />
           </div>
         </Link>
       </div>
 
-      {/* Contact Button + Hamburger - Far Right */}
-      <div className="fixed top-6 right-6 md:top-12 md:right-12 z-50 flex items-center gap-2 md:gap-3">
-        <Link 
-          href="/contact"
-          className="hidden md:flex items-center gap-1.5 px-5 py-2 bg-white/20 backdrop-blur-sm text-white rounded-full hover:bg-white/30 transition-all duration-300 text-sm font-medium shadow-lg border-2 border-white/60"
-        >
-          <span>Contact Us</span>
-          <div className="w-2 h-2 bg-cyan-400 rounded-full shadow-lg shadow-cyan-400/50"></div>
-        </Link>
+      <div className="fixed top-6 right-6 z-50 flex items-center gap-2 md:top-12 md:right-12 md:gap-3">
+        {isLoggedIn ? (
+          <div ref={userMenuRef} className="relative hidden md:block">
+            <button
+              type="button"
+              onClick={() => setIsUserMenuOpen((previous) => !previous)}
+              className="flex items-center gap-2 rounded-full border-2 border-white/60 bg-white/20 px-3 py-1.5 text-white shadow-lg backdrop-blur-sm transition-all duration-300 hover:bg-white/30"
+            >
+              <span className="grid h-7 w-7 place-items-center rounded-full bg-white/20 text-xs font-semibold text-white">
+                {userInitial}
+              </span>
+              <span className="max-w-[120px] truncate text-sm font-medium">{userName}</span>
+            </button>
+
+            {isUserMenuOpen ? (
+              <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-white/30 bg-slate-900/90 p-3 shadow-2xl backdrop-blur">
+                <p className="truncate text-sm font-semibold text-white">{userName}</p>
+                <p className="truncate text-xs text-slate-300">{userEmail}</p>
+
+                {isAdmin ? (
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsUserMenuOpen(false)}
+                    className="mt-3 block rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-sm text-white transition hover:bg-white/10"
+                  >
+                    Admin dashboard
+                  </Link>
+                ) : null}
+
+                <form action={logoutAction} className="mt-2 border-t border-white/10 pt-2">
+                  <button
+                    type="submit"
+                    className="block w-full rounded-lg border border-rose-300/40 bg-rose-500/10 px-3 py-2 text-left text-sm font-medium text-rose-100 transition hover:bg-rose-500/20"
+                  >
+                    Log out
+                  </button>
+                </form>
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <>
+            <Link
+              href="/login"
+              className="hidden items-center gap-1.5 rounded-full border-2 border-white/60 bg-white/20 px-5 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-sm transition-all duration-300 hover:bg-white/30 md:flex"
+            >
+              <span>Login</span>
+            </Link>
+          </>
+        )}
+
+        {!isLoggedIn && isAdmin ? (
+          <Link
+            href="/admin"
+            className="hidden items-center gap-1.5 rounded-full border-2 border-white/60 bg-white/20 px-5 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-sm transition-all duration-300 hover:bg-white/30 md:flex"
+          >
+            Admin
+          </Link>
+        ) : null}
 
         <button
-          onClick={toggleMenu}
-          className="md:hidden p-2 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 rounded-full transition-all duration-300 shadow-lg border-2 border-white/60"
+          onClick={() => setIsOpen((previous) => !previous)}
+          className="rounded-full border-2 border-white/60 bg-white/20 p-2 text-white shadow-lg backdrop-blur-sm transition-all duration-300 hover:bg-white/30 md:hidden"
         >
-          <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="h-5 w-5 md:h-6 md:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
       </div>
 
-      {/* Mobile Menu Dropdown */}
       {isOpen && (
-        <div className="md:hidden fixed top-20 right-6 z-50 bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg p-3 min-w-[200px] border-2 border-white/60">
-          {navLinks.map((link) => (
+        <div className="fixed top-20 right-6 z-50 min-w-[220px] rounded-2xl border-2 border-white/60 bg-white/20 p-3 shadow-lg backdrop-blur-sm md:hidden">
+          {NAV_LINKS.map((link) => (
             <Link
               key={link.id}
               href={link.href}
               onClick={() => handleLinkClick(link.id)}
-              className="block px-3 py-2 text-sm text-white hover:bg-white/10 rounded-lg transition-colors duration-300"
+              className="block rounded-lg px-3 py-2 text-sm text-white transition-colors duration-300 hover:bg-white/10"
             >
               {link.label}
             </Link>
           ))}
-          <Link
-            href="/contact"
-            onClick={() => setIsOpen(false)}
-            className="block px-3 py-2 mt-2 bg-white/10 text-white rounded-full hover:bg-white/20 transition-all duration-300 text-center text-sm font-medium border border-white/40"
-          >
-            Contact Us
-          </Link>
+
+          {isLoggedIn ? (
+            <>
+              <div className="mt-2 rounded-xl border border-white/40 bg-white/10 px-3 py-2">
+                <p className="truncate text-sm font-medium text-white">{userName}</p>
+                <p className="truncate text-xs text-slate-200">{userEmail}</p>
+              </div>
+              {isAdmin ? (
+                <Link
+                  href="/admin"
+                  onClick={() => setIsOpen(false)}
+                  className="mt-2 block rounded-full border border-white/40 bg-white/10 px-3 py-2 text-center text-sm font-medium text-white transition-all duration-300 hover:bg-white/20"
+                >
+                  Admin
+                </Link>
+              ) : null}
+              <form action={logoutAction} className="mt-2">
+                <button
+                  type="submit"
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full rounded-full border border-white/40 bg-white/10 px-3 py-2 text-center text-sm font-medium text-white transition-all duration-300 hover:bg-white/20"
+                >
+                  Logout
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                onClick={() => setIsOpen(false)}
+                className="mt-2 block rounded-full border border-white/40 bg-white/10 px-3 py-2 text-center text-sm font-medium text-white transition-all duration-300 hover:bg-white/20"
+              >
+                Login
+              </Link>
+              <Link
+                href="/register"
+                onClick={() => setIsOpen(false)}
+                className="mt-2 block rounded-full border border-white/40 bg-white/10 px-3 py-2 text-center text-sm font-medium text-white transition-all duration-300 hover:bg-white/20"
+              >
+                Create account
+              </Link>
+            </>
+          )}
         </div>
       )}
 
-      <nav className="fixed top-6 md:top-12 left-1/2 -translate-x-1/2 z-50 w-fit">
-        {/* Desktop Navigation - Floating Rounded Container */}
-        <div className="hidden md:flex items-center bg-white/20 backdrop-blur-sm rounded-full shadow-lg px-2 py-1 gap-0 border-2 border-white/60">
-          {/* Navigation Links with Sliding Background */}
-          <div className="flex items-center relative w-full">
-            {navLinks.map((link, index) => (
+      <nav className="fixed top-6 left-1/2 z-50 w-fit -translate-x-1/2 md:top-12">
+        <div className="hidden items-center gap-0 rounded-full border-2 border-white/60 bg-white/20 px-2 py-1 shadow-lg backdrop-blur-sm md:flex">
+          <div className="relative flex w-full items-center">
+            {NAV_LINKS.map((link) => (
               <Link
                 key={link.id}
+                ref={(element) => {
+                  desktopLinkRefs.current[link.id] = element;
+                }}
                 href={link.href}
                 onClick={() => handleLinkClick(link.id)}
-                className="relative px-6 py-2 text-sm font-medium text-white transition-colors duration-300 z-10 flex-1 text-center whitespace-nowrap"
+                className="relative z-10 flex-1 whitespace-nowrap px-6 py-2 text-center text-sm font-medium text-white transition-colors duration-300"
               >
                 {link.label}
               </Link>
             ))}
-            
-            {/* Sliding Background */}
-            {activeLink && (
+
+            {sliderStyle.visible && (
               <div
-                className="absolute h-8 bg-white/20 rounded-full shadow-sm transition-all duration-300 ease-out -z-0"
+                className="absolute -z-0 h-8 rounded-full bg-white/20 shadow-sm transition-all duration-300 ease-out"
                 style={{
-                  left: `${navLinks.findIndex(l => l.id === activeLink) * (100 / navLinks.length)}%`,
-                  width: `${100 / navLinks.length}%`,
+                  left: `${sliderStyle.left}px`,
+                  width: `${sliderStyle.width}px`,
                 }}
               />
             )}

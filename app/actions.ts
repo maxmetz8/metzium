@@ -17,6 +17,10 @@ export async function submitContactForm(formData: FormData) {
     // Verify origin to prevent CSRF
     const origin = headersList.get("origin");
     const host = headersList.get("host");
+    const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean);
     
     // In production, origin should always be present for POST requests
     // Allow missing origin only in development
@@ -28,7 +32,18 @@ export async function submitContactForm(formData: FormData) {
         };
       }
       const originUrl = new URL(origin);
-      if (originUrl.host !== host) {
+      const isHostMatch = originUrl.host === host;
+      const isExplicitlyAllowed = allowedOrigins.some((allowed) => {
+        try {
+          // Supports entries like: https://www.metzium.com
+          return new URL(allowed).host === originUrl.host;
+        } catch {
+          // Supports entries like: www.metzium.com
+          return allowed === originUrl.host;
+        }
+      });
+
+      if (!isHostMatch && !isExplicitlyAllowed) {
         return {
           success: false,
           error: "Invalid origin",

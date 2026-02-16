@@ -43,6 +43,12 @@ const registerSchema = z
 
 export type RegisterState = {
   error: string | null;
+  fieldErrors: Partial<
+    Record<
+      "accountType" | "firstName" | "lastName" | "companyName" | "email" | "password" | "confirmPassword",
+      string
+    >
+  >;
 };
 
 export async function registerAction(
@@ -52,6 +58,7 @@ export async function registerAction(
   if (!(await isValidAuthOrigin())) {
     return {
       error: "Invalid request.",
+      fieldErrors: {},
     };
   }
 
@@ -60,6 +67,7 @@ export async function registerAction(
   if (!rateLimit.allowed) {
     return {
       error: `Too many registration attempts. Try again in ${rateLimit.retryAfterSeconds} seconds.`,
+      fieldErrors: {},
     };
   }
 
@@ -74,8 +82,18 @@ export async function registerAction(
   });
 
   if (!parsed.success) {
+    const flattened = parsed.error.flatten().fieldErrors;
     return {
-      error: parsed.error.issues[0]?.message ?? "Registration failed.",
+      error: null,
+      fieldErrors: {
+        accountType: flattened.accountType?.[0],
+        firstName: flattened.firstName?.[0],
+        lastName: flattened.lastName?.[0],
+        companyName: flattened.companyName?.[0],
+        email: flattened.email?.[0],
+        password: flattened.password?.[0],
+        confirmPassword: flattened.confirmPassword?.[0],
+      },
     };
   }
 
@@ -87,6 +105,9 @@ export async function registerAction(
   if (existingUser) {
     return {
       error: "Could not create account with these details.",
+      fieldErrors: {
+        email: "An account with this email already exists.",
+      },
     };
   }
 

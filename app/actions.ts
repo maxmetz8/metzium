@@ -6,6 +6,10 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { sendContactEmail } from "@/lib/email";
 import { ZodError } from "zod";
 
+type ContactFieldErrors = Partial<
+  Record<"firstName" | "lastName" | "email" | "enquiryType" | "message", string>
+>;
+
 export async function submitContactForm(formData: FormData) {
   try {
     // Get client IP for rate limiting
@@ -29,6 +33,7 @@ export async function submitContactForm(formData: FormData) {
         return {
           success: false,
           error: "Invalid request",
+          fieldErrors: {} as ContactFieldErrors,
         };
       }
       const originUrl = new URL(origin);
@@ -47,6 +52,7 @@ export async function submitContactForm(formData: FormData) {
         return {
           success: false,
           error: "Invalid origin",
+          fieldErrors: {} as ContactFieldErrors,
         };
       }
     } else if (process.env.NODE_ENV === "production") {
@@ -54,6 +60,7 @@ export async function submitContactForm(formData: FormData) {
       return {
         success: false,
         error: "Invalid request - missing origin",
+        fieldErrors: {} as ContactFieldErrors,
       };
     }
 
@@ -63,6 +70,7 @@ export async function submitContactForm(formData: FormData) {
       return {
         success: false,
         error: `Too many requests. Please try again after ${rateLimitResult.resetAt.toLocaleTimeString()}.`,
+        fieldErrors: {} as ContactFieldErrors,
       };
     }
 
@@ -81,6 +89,7 @@ export async function submitContactForm(formData: FormData) {
       return {
         success: false,
         error: "Invalid submission",
+        fieldErrors: {} as ContactFieldErrors,
       };
     }
 
@@ -106,6 +115,7 @@ export async function submitContactForm(formData: FormData) {
       return {
         success: false,
         error: "Your message contains too many links. Please remove some and try again.",
+        fieldErrors: {} as ContactFieldErrors,
       };
     }
 
@@ -118,20 +128,31 @@ export async function submitContactForm(formData: FormData) {
     return {
       success: true,
       message: "Thank you for your message! We'll get back to you soon.",
+      fieldErrors: {} as ContactFieldErrors,
     };
   } catch (error) {
     console.error("Contact form error:", error);
 
     if (error instanceof ZodError) {
+      const firstIssueFor = (field: string) =>
+        error.issues.find((issue) => issue.path[0] === field)?.message;
       return {
         success: false,
-        error: error.issues[0]?.message || "Validation failed",
+        error: "Please review the highlighted fields.",
+        fieldErrors: {
+          firstName: firstIssueFor("firstName"),
+          lastName: firstIssueFor("lastName"),
+          email: firstIssueFor("email"),
+          enquiryType: firstIssueFor("enquiryType"),
+          message: firstIssueFor("message"),
+        } as ContactFieldErrors,
       };
     }
 
     return {
       success: false,
       error: "Failed to send message. Please try again later.",
+      fieldErrors: {} as ContactFieldErrors,
     };
   }
 }

@@ -13,7 +13,7 @@ Portfolio and contact website for Metzium
   - Basic spam checks (link detection)
   - Origin verification (CSRF protection)
   - No secrets exposed to client
-- **Email Integration**: Nodemailer with STRATO SMTP support
+- **Email Integration**: Nodemailer with local Mailpit support and production SMTP provider support
 
 ## Prerequisites
 
@@ -40,16 +40,37 @@ Copy `.env.example` to `.env.local`:
 cp .env.example .env.local
 ```
 
-Edit `.env.local` with your STRATO SMTP credentials:
-```env
-SMTP_HOST=smtp.strato.com
-SMTP_PORT=465
-SMTP_SECURE=true
-SMTP_USER=your-email@yourdomain.com
-SMTP_PASS=your-password
-SMTP_FROM=your-email@yourdomain.com
-SMTP_TO=contact@metzium.com
+For local development with Mailpit:
+```bash
+docker run --rm -p 1025:1025 -p 8025:8025 axllent/mailpit
 ```
+
+Then use:
+```env
+SMTP_HOST=127.0.0.1
+SMTP_PORT=1025
+SMTP_SECURE=false
+SMTP_AUTH=false
+SMTP_FROM=no-reply@localhost
+SMTP_TO=contact@metzium.local
+```
+
+Open Mailpit UI at [http://localhost:8025](http://localhost:8025).
+
+For production on Railway, use a real SMTP provider and domain-aligned sender:
+```env
+SMTP_HOST=smtp.resend.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_AUTH=true
+SMTP_USER=resend
+SMTP_PASS=your-provider-api-key-or-password
+SMTP_FROM=contact@metzium.com
+SMTP_TO=contact@metzium.com
+ALLOWED_ORIGINS=https://metzium.com,https://www.metzium.com
+```
+
+Important: configure SPF and DKIM for `metzium.com` at your DNS provider, otherwise providers may reject your messages or mark them as spam.
 
 **Note on Rate Limiting**: The current implementation uses in-memory storage, which works well for single-server deployments. For serverless environments (e.g., Vercel), consider implementing a Redis or database-backed solution for persistent rate limiting across function instances.
 

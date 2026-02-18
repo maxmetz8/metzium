@@ -24,6 +24,7 @@ type NavbarProps = {
 export default function Navbar({ userName, userEmail, isAdmin }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("home");
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const desktopLinkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
@@ -123,9 +124,32 @@ export default function Navbar({ userName, userEmail, isAdmin }: NavbarProps) {
     };
   }, [displayActiveLink]);
 
+  useEffect(() => {
+    if (!isLogoutConfirmOpen) {
+      return;
+    }
+
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsLogoutConfirmOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", onEscape);
+    return () => {
+      document.removeEventListener("keydown", onEscape);
+    };
+  }, [isLogoutConfirmOpen]);
+
   const handleLinkClick = (link: string) => {
     setActiveLink(link);
     setIsOpen(false);
+  };
+
+  const openLogoutConfirm = () => {
+    setIsOpen(false);
+    setIsUserMenuOpen(false);
+    setIsLogoutConfirmOpen(true);
   };
 
   return (
@@ -167,14 +191,15 @@ export default function Navbar({ userName, userEmail, isAdmin }: NavbarProps) {
                   </Link>
                 ) : null}
 
-                <form action={logoutAction} className="mt-2 border-t border-white/10 pt-2">
+                <div className="mt-2 border-t border-white/10 pt-2">
                   <button
-                    type="submit"
+                    type="button"
+                    onClick={openLogoutConfirm}
                     className="block w-full rounded-lg border border-rose-300/40 bg-rose-500/10 px-3 py-2 text-left text-sm font-medium text-rose-100 transition hover:bg-rose-500/20"
                   >
                     Log out
                   </button>
-                </form>
+                </div>
               </div>
             ) : null}
           </div>
@@ -236,15 +261,15 @@ export default function Navbar({ userName, userEmail, isAdmin }: NavbarProps) {
                   Admin
                 </Link>
               ) : null}
-              <form action={logoutAction} className="mt-2">
+              <div className="mt-2">
                 <button
-                  type="submit"
-                  onClick={() => setIsOpen(false)}
+                  type="button"
+                  onClick={openLogoutConfirm}
                   className="block w-full rounded-full border border-white/40 bg-white/10 px-3 py-2 text-center text-sm font-medium text-white transition-all duration-300 hover:bg-white/20"
                 >
                   Logout
                 </button>
-              </form>
+              </div>
             </>
           ) : (
             <>
@@ -296,6 +321,40 @@ export default function Navbar({ userName, userEmail, isAdmin }: NavbarProps) {
           </div>
         </div>
       </nav>
+
+      {isLogoutConfirmOpen ? (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 px-6"
+          onClick={() => setIsLogoutConfirmOpen(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl border border-white/20 bg-slate-900/95 p-5 shadow-2xl backdrop-blur"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 className="text-lg font-semibold text-white">Log out?</h2>
+            <p className="mt-2 text-sm text-slate-300">
+              Are you sure you want to log out of your account?
+            </p>
+            <div className="mt-5 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setIsLogoutConfirmOpen(false)}
+                className="flex-1 rounded-lg border border-white/30 bg-white/5 px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10"
+              >
+                Cancel
+              </button>
+              <form action={logoutAction} className="flex-1">
+                <button
+                  type="submit"
+                  className="w-full rounded-lg border border-rose-300/50 bg-rose-500/20 px-3 py-2 text-sm font-medium text-rose-100 transition hover:bg-rose-500/30"
+                >
+                  Log out
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }

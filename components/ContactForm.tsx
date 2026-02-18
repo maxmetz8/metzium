@@ -6,6 +6,9 @@ import { submitContactForm } from "@/app/actions";
 export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<
+    Partial<Record<"firstName" | "lastName" | "email" | "enquiryType" | "message", string>>
+  >({});
   const fieldClassName =
     "w-full rounded-xl border border-white/15 bg-black/30 px-4 py-3 text-white placeholder:text-gray-500 transition focus:border-cyan-300/70 focus:outline-none focus:ring-2 focus:ring-cyan-300/30 disabled:cursor-not-allowed disabled:opacity-70";
 
@@ -13,6 +16,7 @@ export default function ContactForm() {
     event.preventDefault();
     setIsSubmitting(true);
     setMessage(null);
+    setFieldErrors({});
 
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -22,10 +26,13 @@ export default function ContactForm() {
 
       if (result.success) {
         setMessage({ type: "success", text: result.message || "Message sent successfully!" });
+        setFieldErrors({});
         // Reset form
         form.reset();
+        setTimeout(() => setMessage(null), 4000);
       } else {
         setMessage({ type: "error", text: result.error || "Failed to send message" });
+        setFieldErrors(result.fieldErrors ?? {});
       }
     } catch (error) {
       console.error("Form submission error:", error);
@@ -62,6 +69,7 @@ export default function ContactForm() {
             placeholder="John"
             disabled={isSubmitting}
           />
+          {fieldErrors.firstName ? <p className="mt-1 text-sm text-rose-300">{fieldErrors.firstName}</p> : null}
         </div>
         <div>
           <label htmlFor="lastName" className="block text-xs sm:text-sm font-medium text-white/90 mb-2">
@@ -76,6 +84,7 @@ export default function ContactForm() {
             placeholder="Doe"
             disabled={isSubmitting}
           />
+          {fieldErrors.lastName ? <p className="mt-1 text-sm text-rose-300">{fieldErrors.lastName}</p> : null}
         </div>
       </div>
 
@@ -94,6 +103,7 @@ export default function ContactForm() {
             placeholder="you@company.com"
             disabled={isSubmitting}
           />
+          {fieldErrors.email ? <p className="mt-1 text-sm text-rose-300">{fieldErrors.email}</p> : null}
         </div>
         <div>
           <label htmlFor="enquiryType" className="block text-xs sm:text-sm font-medium text-white/90 mb-2">
@@ -127,6 +137,7 @@ export default function ContactForm() {
               />
             </svg>
           </div>
+          {fieldErrors.enquiryType ? <p className="mt-1 text-sm text-rose-300">{fieldErrors.enquiryType}</p> : null}
         </div>
       </div>
 
@@ -144,11 +155,12 @@ export default function ContactForm() {
           placeholder="Tell us about your project, timeline, and goals."
           disabled={isSubmitting}
         />
+        {fieldErrors.message ? <p className="mt-1 text-sm text-rose-300">{fieldErrors.message}</p> : null}
       </div>
 
       {message && (
         <div
-          className={`p-4 rounded-lg ${
+          className={`fixed right-4 top-24 z-50 max-w-sm rounded-lg p-4 shadow-xl backdrop-blur ${
             message.type === "success"
               ? "border border-emerald-300/30 bg-emerald-400/10 text-emerald-200"
               : "border border-red-300/30 bg-red-400/10 text-red-200"

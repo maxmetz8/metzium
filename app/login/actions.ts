@@ -14,12 +14,14 @@ const loginSchema = z.object({
 
 export type LoginState = {
   error: string | null;
+  fieldErrors: Partial<Record<"email" | "password", string>>;
 };
 
 export async function loginAction(_prevState: LoginState, formData: FormData): Promise<LoginState> {
   if (!(await isValidAuthOrigin())) {
     return {
       error: "Invalid request.",
+      fieldErrors: {},
     };
   }
 
@@ -29,6 +31,7 @@ export async function loginAction(_prevState: LoginState, formData: FormData): P
   if (!rateLimit.allowed) {
     return {
       error: `Too many login attempts. Try again in ${rateLimit.retryAfterSeconds} seconds.`,
+      fieldErrors: {},
     };
   }
 
@@ -38,8 +41,13 @@ export async function loginAction(_prevState: LoginState, formData: FormData): P
   });
 
   if (!parsed.success) {
+    const flattened = parsed.error.flatten().fieldErrors;
     return {
-      error: parsed.error.issues[0]?.message ?? "Invalid credentials.",
+      error: null,
+      fieldErrors: {
+        email: flattened.email?.[0],
+        password: flattened.password?.[0],
+      },
     };
   }
 
@@ -51,6 +59,7 @@ export async function loginAction(_prevState: LoginState, formData: FormData): P
   if (!user || !isValid) {
     return {
       error: "Invalid email or password.",
+      fieldErrors: {},
     };
   }
 

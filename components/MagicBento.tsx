@@ -578,7 +578,7 @@ const MagicBento: React.FC<BentoProps> = ({
                   <div className="magic-bento-card__image-wrapper">
                     <Image
                       src={card.image}
-                      alt={card.title}
+                      alt={card.title ?? card.label ?? "Feature image"}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
                       unoptimized
@@ -715,7 +715,7 @@ const MagicBento: React.FC<BentoProps> = ({
                 <div className="magic-bento-card__image-wrapper">
                   <Image
                     src={card.image}
-                    alt={card.title}
+                    alt={card.title ?? card.label ?? "Feature image"}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
                     unoptimized

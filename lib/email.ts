@@ -1,4 +1,5 @@
-import nodemailer from "nodemailer";
+import FormData from "form-data";
+import Mailgun from "mailgun.js";
 
 // HTML escape utility to prevent XSS
 function escapeHtml(text: string): string {
@@ -12,52 +13,30 @@ function escapeHtml(text: string): string {
   return text.replace(/[&<>"']/g, (m) => map[m]);
 }
 
-function isTrue(value: string | undefined, fallback = false): boolean {
-  if (!value) return fallback;
-  return value.toLowerCase() === "true";
-}
+function getMailgunConfig() {
+  const apiKey = process.env.MAILGUN_API_KEY;
+  const domain = process.env.MAILGUN_DOMAIN;
+  const from = process.env.MAILGUN_FROM;
+  const to = process.env.MAILGUN_TO;
+  const url = process.env.MAILGUN_API_BASE_URL || "https://api.eu.mailgun.net";
 
-function getSmtpConfig() {
-  const isDevelopment = process.env.NODE_ENV !== "production";
-
-  const host = process.env.SMTP_HOST || (isDevelopment ? "127.0.0.1" : undefined);
-  const port = parseInt(process.env.SMTP_PORT || (isDevelopment ? "1025" : "587"), 10);
-  const secure = isTrue(process.env.SMTP_SECURE, false);
-  const smtpAuthFlag = process.env.SMTP_AUTH;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-
-  if (!host) {
-    throw new Error("SMTP_HOST is required in production");
+  if (!apiKey) {
+    throw new Error("MAILGUN_API_KEY is required");
   }
 
-  const useAuth = smtpAuthFlag ? isTrue(smtpAuthFlag, false) : Boolean(user && pass);
-
-  if (useAuth && (!user || !pass)) {
-    throw new Error("SMTP_USER and SMTP_PASS are required when SMTP_AUTH is enabled");
+  if (!domain) {
+    throw new Error("MAILGUN_DOMAIN is required");
   }
-
-  const from = process.env.SMTP_FROM || user || (isDevelopment ? "no-reply@localhost" : undefined);
-  const to = process.env.SMTP_TO || user;
 
   if (!from) {
-    throw new Error("SMTP_FROM is required in production");
+    throw new Error("MAILGUN_FROM is required");
   }
 
   if (!to) {
-    throw new Error("SMTP_TO is required");
+    throw new Error("MAILGUN_TO is required");
   }
 
-  return {
-    host,
-    port,
-    secure,
-    useAuth,
-    user,
-    pass,
-    from,
-    to,
-  };
+  return { apiKey, domain, from, to, url };
 }
 
 export async function sendContactEmail(data: {
@@ -67,25 +46,18 @@ export async function sendContactEmail(data: {
   enquiryType: string;
   message: string;
 }) {
-  const smtp = getSmtpConfig();
-
-  // SMTP setup supports both local Mailpit (no auth) and production providers (auth enabled)
-  const transporter = nodemailer.createTransport({
-    host: smtp.host,
-    port: smtp.port,
-    secure: smtp.secure,
-    auth: smtp.useAuth
-      ? {
-          user: smtp.user,
-          pass: smtp.pass,
-        }
-      : undefined,
+  const mailgunConfig = getMailgunConfig();
+  const mailgun = new Mailgun(FormData);
+  const client = mailgun.client({
+    username: "api",
+    key: mailgunConfig.apiKey,
+    url: mailgunConfig.url,
   });
 
   // Prepare email content with HTML escaping
-  const mailOptions = {
-    from: smtp.from,
-    to: smtp.to,
+  const message = {
+    from: mailgunConfig.from,
+    to: [mailgunConfig.to],
     subject: `New Contact Form Submission from ${data.firstName} ${data.lastName}`,
     text: `
   Name: ${data.firstName} ${data.lastName}
@@ -103,13 +75,8 @@ ${data.message}
 <h3>Message:</h3>
 <p>${escapeHtml(data.message).replace(/\n/g, "<br>")}</p>
     `.trim(),
-    replyTo: data.email,
-    envelope: {
-      from: smtp.from,
-      to: smtp.to,
-    },
+    "h:Reply-To": data.email,
   };
 
-  // Send email
-  await transporter.sendMail(mailOptions);
+  await client.messages.create(mailgunConfig.domain, message);
 }

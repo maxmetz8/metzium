@@ -1,16 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { submitContactForm } from "@/app/actions";
 
 export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<"firstName" | "lastName" | "email" | "enquiryType" | "message", string>>
   >({});
   const fieldClassName =
     "w-full rounded-xl border border-white/15 bg-black/30 px-4 py-3 text-white placeholder:text-gray-500 transition focus:border-cyan-300/70 focus:outline-none focus:ring-2 focus:ring-cyan-300/30 disabled:cursor-not-allowed disabled:opacity-70";
+
+  useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,7 +34,6 @@ export default function ContactForm() {
       if (result.success) {
         setMessage({ type: "success", text: result.message || "Message sent successfully!" });
         setFieldErrors({});
-        // Reset form
         form.reset();
         setTimeout(() => setMessage(null), 4000);
       } else {
@@ -44,7 +50,6 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl mx-auto">
-      {/* Honeypot field - hidden from users */}
       <input
         type="text"
         name="company"
@@ -54,10 +59,9 @@ export default function ContactForm() {
         aria-hidden="true"
       />
 
-      {/* First Name and Last Name */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <label htmlFor="firstName" className="block text-xs sm:text-sm font-medium text-white/90 mb-2">
+          <label htmlFor="firstName" className="mb-2 block text-xs font-medium text-white/90 sm:text-sm">
             First Name *
           </label>
           <input
@@ -72,7 +76,7 @@ export default function ContactForm() {
           {fieldErrors.firstName ? <p className="mt-1 text-sm text-rose-300">{fieldErrors.firstName}</p> : null}
         </div>
         <div>
-          <label htmlFor="lastName" className="block text-xs sm:text-sm font-medium text-white/90 mb-2">
+          <label htmlFor="lastName" className="mb-2 block text-xs font-medium text-white/90 sm:text-sm">
             Last Name *
           </label>
           <input
@@ -88,10 +92,9 @@ export default function ContactForm() {
         </div>
       </div>
 
-      {/* Email and Type of Enquiry */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-white/90 mb-2">
+          <label htmlFor="email" className="mb-2 block text-xs font-medium text-white/90 sm:text-sm">
             Email Address *
           </label>
           <input
@@ -106,7 +109,7 @@ export default function ContactForm() {
           {fieldErrors.email ? <p className="mt-1 text-sm text-rose-300">{fieldErrors.email}</p> : null}
         </div>
         <div>
-          <label htmlFor="enquiryType" className="block text-xs sm:text-sm font-medium text-white/90 mb-2">
+          <label htmlFor="enquiryType" className="mb-2 block text-xs font-medium text-white/90 sm:text-sm">
             Type of Enquiry *
           </label>
           <div className="relative">
@@ -141,9 +144,8 @@ export default function ContactForm() {
         </div>
       </div>
 
-      {/* Message */}
       <div>
-        <label htmlFor="message" className="block text-xs sm:text-sm font-medium text-white/90 mb-2">
+        <label htmlFor="message" className="mb-2 block text-xs font-medium text-white/90 sm:text-sm">
           How can we help? *
         </label>
         <textarea
@@ -158,22 +160,55 @@ export default function ContactForm() {
         {fieldErrors.message ? <p className="mt-1 text-sm text-rose-300">{fieldErrors.message}</p> : null}
       </div>
 
-      {message && (
-        <div
-          className={`fixed right-4 top-24 z-50 max-w-sm rounded-lg p-4 shadow-xl backdrop-blur ${
-            message.type === "success"
-              ? "border border-emerald-300/30 bg-emerald-400/10 text-emerald-200"
-              : "border border-red-300/30 bg-red-400/10 text-red-200"
-          }`}
-        >
-          {message.text}
-        </div>
-      )}
+      {isMounted && message
+        ? createPortal(
+            <div className="pointer-events-none fixed inset-x-0 top-4 z-[9999] flex justify-center px-4 sm:top-6">
+              <div
+                role="status"
+                aria-live="polite"
+                className={`pointer-events-auto w-[min(94vw,36rem)] rounded-2xl border px-5 py-4 shadow-2xl backdrop-blur-sm ${
+                  message.type === "success"
+                    ? "border-emerald-200/60 bg-emerald-950/90 text-emerald-50"
+                    : "border-rose-200/60 bg-rose-950/90 text-rose-50"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <div
+                    className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${
+                      message.type === "success"
+                        ? "bg-emerald-400/30 text-emerald-50"
+                        : "bg-rose-400/30 text-rose-50"
+                    }`}
+                  >
+                    {message.type === "success" ? "✓" : "!"}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold">
+                      {message.type === "success" ? "Message sent" : "Message failed"}
+                    </p>
+                    <p className="mt-1 break-words text-sm leading-5 text-white/95">{message.text}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setMessage(null)}
+                    className="shrink-0 rounded-full p-1 text-white/75 transition hover:bg-white/10 hover:text-white"
+                    aria-label="Close notification"
+                  >
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                      <path d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 0 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 0 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm sm:text-base font-semibold text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60 sm:text-base"
       >
         {isSubmitting ? "Sending..." : "Send Message"}
       </button>
